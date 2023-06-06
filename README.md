@@ -67,74 +67,11 @@ Instalando a biblioteca react-native-svg-transformer como dependência de desenv
 ```
 npm i react-native-svg-transformer --save-dev
 ```
-
-
-
------old project
-
-Criar a pasta @types, criar um arquivo com o nome "app.d.ts"
-```
-/// <reference types="nativewind/types" />
-```
-Criar um arquivo de configuração na raiz com o nome "metro.config.js"
-```
-const { getDefaultConfig } = require("expo/metro-config");
-
-module.exports = (() => {
-  const config = getDefaultConfig(__dirname);
-
-  const { transformer, resolver } = config;
-
-  config.transformer = {
-    ...transformer,
-    babelTransformerPath: require.resolve("react-native-svg-transformer"),
-  };
-  config.resolver = {
-    ...resolver,
-    assetExts: resolver.assetExts.filter((ext) => ext !== "svg"),
-    sourceExts: [...resolver.sourceExts, "svg"],
-  };
-
-  return config;
-})();
-```
-Criar um arquivo na pasta @types com o nome "svg.d.ts"
-```
-declare module "*.svg" {
-  import React from 'react';
-  import { SvgProps } from "react-native-svg";
-  const content: React.FC<SvgProps>;
-  export default content;
-}
-```
-Instalando a biblioteca dayjs
-```
-npm i dayjs
-```
-Criar a pasta 'lib', criar o arquivo dayjs.ts, definindo o local pt-br
-```
-import dayjs from "dayjs";
-import 'dayjs/locale/pt-br';
-
-dayjs.locale('pt-br');
-```
-Instalando a bíblioteca react-navigation
-```
-npm install @react-navigation/native
-```
-Instalando as dependências da bíblioteca react-navigation
-```
-npx expo install react-native-screens react-native-safe-area-context
-```
-Instalando o native stack da bíblioteca react-navigation
-```
-npm install @react-navigation/native-stack
-```
-Instalando o axios para requisições http
+Intalando o axio
 ```
 npm i axios
 ```
-Instalando a bíbioteca clsx
+Instalando o expo secure-store
 ```
-npm i --save clsx
+npx expo install expo-secure-store
 ```
