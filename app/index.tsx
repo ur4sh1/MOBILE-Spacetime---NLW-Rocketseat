@@ -1,20 +1,20 @@
+import { BaiJamjuree_700Bold } from "@expo-google-fonts/bai-jamjuree";
+import { ImageBackground, View, Text, TouchableOpacity } from "react-native";
+import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
+import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
+import { useRouter } from "expo-router";
+import { useEffect } from "react";
 import {
   useFonts,
   Roboto_400Regular,
   Roboto_700Bold,
 } from "@expo-google-fonts/roboto";
-import { BaiJamjuree_700Bold } from "@expo-google-fonts/bai-jamjuree";
-import { ImageBackground, View, Text, TouchableOpacity } from "react-native";
-import blurBg from "./src/assets/bg-blur.png";
-import Stripes from "./src/assets/stripes.svg";
-import LogoNlw from "./src/assets/nlw-logo.svg";
+import { api } from "../src/lib/api";
+import blurBg from "../src/assets/bg-blur.png";
+import Stripes from "../src/assets/stripes.svg";
+import LogoNlw from "../src/assets/nlw-logo.svg";
 import { styled } from "nativewind";
-import { useEffect } from "react";
-import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
-import { api } from "./src/lib/api";
-import * as SecureStore from "expo-secure-store";
-import { err } from "react-native-svg/lib/typescript/xml";
 
 const StyleStripes = styled(Stripes);
 
@@ -26,13 +26,15 @@ const discovery = {
 };
 
 export default function App() {
+  const router = useRouter();
+
   const [hasLoadedFonts] = useFonts({
     Roboto_400Regular,
     Roboto_700Bold,
     BaiJamjuree_700Bold,
   });
 
-  const [request, response, signInWithGithub] = useAuthRequest(
+  const [, response, signInWithGithub] = useAuthRequest(
     {
       clientId: "01b210f89de9bb362c4d",
       scopes: ["identity"],
@@ -43,28 +45,32 @@ export default function App() {
     discovery
   );
 
+  async function handleGithubOauthCode(code: string) {
+    const response = await api.post("/register", {
+      code,
+    });
+
+    const { token } = response.data;
+
+    await SecureStore.setItemAsync("token", token);
+
+    router.push("/memories");
+  }
+
   useEffect(() => {
-    // console.log(
-    //   makeRedirectUri({
-    //     scheme: "nlwspacetime",
-    //   })
-    // );
+    //exibi o ip
+    console.log(
+      makeRedirectUri({
+        scheme: "nlwspacetime",
+      })
+    );
 
     if (response?.type === "success") {
       const { code } = response.params;
 
-      api
-        .post("/register", {
-          code,
-        })
-        .then((response) => {
-          const { token } = response.data;
+      console.log(code);
 
-          SecureStore.setItemAsync("token", token);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      handleGithubOauthCode(code);
     }
   }, [response]);
 
